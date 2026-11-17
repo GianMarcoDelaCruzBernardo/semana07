@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semana 07 - JWT con roles</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+  input, select, button { padding: .5rem; margin: .25rem 0; width: 100%; box-sizing: border-box; }
+  button { cursor: pointer; }
+  .row { display: flex; gap: .5rem; } .row button { width: auto; flex: 1; }
+  pre { background: #f4f4f4; padding: 1rem; white-space: pre-wrap; word-break: break-all; }
+</style>
+</head>
+<body>
+<h1>JWT con roles</h1>
+<h3>Registro / Login</h3>
+<input id="username" placeholder="Usuario">
+<input id="email" placeholder="Email (solo registro)">
+<input id="password" type="password" placeholder="Contraseña">
+<select id="role"><option>user</option><option>moderator</option><option>admin</option></select>
+<div class="row"><button onclick="registrar()">Registrar</button><button onclick="login()">Login</button></div>
+<h3>Rutas protegidas</h3>
+<div class="row">
+  <button onclick="probar('all')">Público</button>
+  <button onclick="probar('user')">User</button>
+  <button onclick="probar('mod')">Mod</button>
+  <button onclick="probar('admin')">Admin</button>
+</div>
+<pre id="out">Listo.</pre>
+<script>
+let token = '';
+const out = (x) => document.getElementById('out').textContent = typeof x === 'string' ? x : JSON.stringify(x, null, 2);
+const val = (id) => document.getElementById(id).value;
+async function registrar() {
+  const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: val('username'), email: val('email'), password: val('password'), roles: [val('role')] }) });
+  out(await r.json());
+}
+async function login() {
+  const r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: val('username'), password: val('password') }) });
+  const d = await r.json(); token = d.accessToken || ''; out(d);
+}
+async function probar(ruta) {
+  const r = await fetch('/api/test/' + ruta, { headers: { 'x-access-token': token } });
+  out(r.status + ' - ' + await r.text());
+}
+</script>
+</body>
+</html>
