@@ -1,0 +1,13 @@
+{
+  "name": "semana07",
+  "version": "1.0.0",
+  "description": "Backend JWT con roles (Node, Express, Sequelize) listo para Render",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false,
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  }
+}
